@@ -1,5 +1,5 @@
 {
-  "name": "gamanika",
+  "name": "mainproject",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,18 +9,48 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@iconify/react": "^5.0.2",
+    "@mui/icons-material": "^5.16.7",
+    "@mui/material": "^5.16.7",
+    "@nextui-org/react": "^2.4.6",
+    "@tabler/icons-react": "^3.12.0",
+    "axios": "^1.7.3",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "ejs": "^3.1.10",
+    "flowbite-react": "^0.10.1",
+    "framer-motion": "^11.3.28",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.427.0",
+    "mongoose": "^8.5.2",
+    "next": "14.2.5",
+    "next-themes": "^0.3.0",
+    "nodemailer": "^6.9.14",
+    "nprogress": "^0.2.0",
+    "radix-ui": "^1.0.1",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.5"
+    "react-hot-toast": "^2.4.1",
+    "react-modal-video": "^2.0.2",
+    "tailwind-merge": "^2.5.2",
+    "typewriter-effect": "^2.21.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/ejs": "^3.1.5",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/lodash": "^4.17.7",
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.15",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "typescript": "^5"
   }
 }

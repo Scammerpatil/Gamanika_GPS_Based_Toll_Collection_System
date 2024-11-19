@@ -1,4 +1,5 @@
 export type Vehicle = {
+  uniqueVehicleNumber: string;
   registrationNumber: string;
   registrationDate: Date;
   vehicleType: string;

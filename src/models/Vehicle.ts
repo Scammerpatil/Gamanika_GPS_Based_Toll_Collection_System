@@ -1,10 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 const VehicleSchema = new Schema({
-  uniqueNumber:{
-    type:String,
-    required:true,
-    unique:true,
+  uniqueVehicleNumber: {
+    type: String,
+    required: true,
+    unique: true,
   },
   registrationNumber: {
     type: String,

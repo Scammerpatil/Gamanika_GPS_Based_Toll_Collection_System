@@ -1,4 +1,11 @@
-import { HomeIcon, UserCheck, Bell, FileText, Settings } from "lucide-react";
+import {
+  HomeIcon,
+  UserCheck,
+  Bell,
+  FileText,
+  Settings,
+  MapPin,
+} from "lucide-react";
 import { SideNavItem } from "@/types/types";
 
 export const SIDENAV_ITEMS: SideNavItem[] = [
@@ -11,6 +18,11 @@ export const SIDENAV_ITEMS: SideNavItem[] = [
     title: "User Approval",
     path: "/admin/approve-users",
     icon: <UserCheck width="24" height="24" />,
+  },
+  {
+    title: "Add Location",
+    path: "/admin/add-location",
+    icon: <MapPin width="24" height="24" />,
   },
   {
     title: "Notices",

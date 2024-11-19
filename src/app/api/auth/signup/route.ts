@@ -91,10 +91,20 @@ export async function POST(req: NextRequest) {
       default:
         tollRate = 100 / 60;
     }
-    //First save the vehicle
+    const getAsciiRepresentation = (name: string) => {
+      return name
+        .split("")
+        .map((char) => char.charCodeAt(0))
+        .join("");
+    };
+    const uniqueVehicleNumber =
+      vehicleDetails.registrationNumber +
+      "-" +
+      getAsciiRepresentation(username.slice(0, 3));
     const newVehicle = new Vehicle({
       ...vehicleDetails,
       tollRate,
+      uniqueVehicleNumber,
     });
     await newVehicle.save();
     // Create a new user

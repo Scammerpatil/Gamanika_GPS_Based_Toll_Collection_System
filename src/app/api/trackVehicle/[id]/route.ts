@@ -17,14 +17,15 @@ export async function POST(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const id = pathname.split("/").pop();
   const { lat, lng } = await req.json();
-  const vehicle = await Vehicle.findById(id);
+  console.log("Request", { id, lat, lng });
+  return NextResponse.json({ message: "Received" });
+  const vehicle = await Vehicle.findOne({ uniqueVehicleNumber: id });
   if (!vehicle) {
     return NextResponse.json(
       { message: "Vehicle not found." },
       { status: 404 }
     );
   }
-  console.log("Vehicle", vehicle);
 
   const distanceFromCenter = haversine(geofenceLat, geofenceLon, lat, lng);
 
@@ -39,7 +40,6 @@ export async function POST(req: NextRequest) {
         { status: 200 }
       );
     } else {
-      // Calculate the distance from the starting point
       const distanceFromStart = haversine(
         initialLocation.lat,
         initialLocation.lng,

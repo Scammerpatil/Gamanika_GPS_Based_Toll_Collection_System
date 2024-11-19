@@ -1,0 +1,124 @@
+#include <ESP8266WiFi.h>
+#include <EEPROM.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266HTTPClient.h>
+
+const char* ssid = "Redmi 9A";
+const char* password = "00000000";
+ESP8266WebServer server(80);
+
+String vehicleNumber;
+int address = 0;
+
+// Predefined latitudes and longitudes
+float latitudes[] = {40.7128, 34.0522, 51.5074}; 
+float longitudes[] = {-74.0060, -118.2437, -0.1278}; 
+int currentIndex = 0; 
+
+void setup() {
+  Serial.begin(115200);
+  EEPROM.begin(512);
+
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Connected to WiFi");
+
+  // Print the IP address of the NodeMCU so you can access the web page
+  Serial.println("IP address: " + WiFi.localIP().toString());
+
+  // Read stored vehicle number
+  vehicleNumber = readVehicleNumber();
+  if (vehicleNumber.length() == 0) {
+    Serial.println("Vehicle number not set.");
+  } else {
+    Serial.println("Stored vehicle number: " + vehicleNumber);
+  }
+
+  server.on("/", HTTP_GET, []() {
+    String html = "<html><body>";
+    html += "<h1>Enter Vehicle Number</h1>";
+    html += "<form action='/setVehicleNumber' method='POST'>";  // POST request to save vehicle number
+    html += "Vehicle Number: <input type='text' name='vehicleNumber' required><br><br>";
+    html += "<input type='submit' value='Save Vehicle Number'>";
+    html += "</form>";
+    html += "</body></html>";
+    server.send(200, "text/html", html);  // Send HTML form
+  });
+
+  server.on("/setVehicleNumber", HTTP_POST, []() {
+    if (server.hasArg("vehicleNumber")) {
+      vehicleNumber = server.arg("vehicleNumber");
+      storeVehicleNumber(vehicleNumber);
+      server.send(200, "text/plain", "Vehicle number saved: " + vehicleNumber);  // Confirmation message
+    } else {
+      server.send(400, "text/plain", "Invalid request");
+    }
+  });
+
+  server.begin();
+  Serial.println("HTTP server started");
+}
+
+void loop() {
+  server.handleClient();  // Handle incoming client requests
+
+  // Send location data to server every 5 minutes
+  static unsigned long lastTime = 0;
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - lastTime >= 300000) {  // 5 minutes in milliseconds
+    lastTime = currentMillis;
+
+    // Send predefined coordinates to the server
+    sendCoordinatesToServer(latitudes[currentIndex], longitudes[currentIndex]);
+
+    // Move to the next set of coordinates
+    currentIndex++;
+    if (currentIndex >= sizeof(latitudes) / sizeof(latitudes[0])) {
+      currentIndex = 0;  // Loop back to the first set of coordinates
+    }
+  }
+}
+
+void storeVehicleNumber(String vehicleNumber) {
+  // Store the vehicle number in EEPROM
+  for (int i = 0; i < vehicleNumber.length(); i++) {
+    EEPROM.write(address + i, vehicleNumber[i]);
+  }
+  EEPROM.write(address + vehicleNumber.length(), '\0'); // Null terminator to mark the end of the string
+  EEPROM.commit();  // Commit changes to EEPROM
+}
+
+String readVehicleNumber() {
+  // Read the vehicle number from EEPROM
+  String storedNumber = "";
+  char ch;
+  int i = 0;
+  while ((ch = EEPROM.read(address + i)) != '\0' && i < 512) {
+    storedNumber += ch;
+    i++;
+  }
+  return storedNumber;
+}
+
+void sendCoordinatesToServer(float lat, float lng) {
+  HTTPClient http;
+
+  String url = "http://localhost:3000/api/trackVehicle/" + vehicleNumber;
+  String jsonData = "{\"lat\": " + String(lat, 4) + ", \"lng\": " + String(lng, 4) + "}";
+
+  http::begin(url);  // Begin HTTP request
+  http.addHeader("Content-Type", "application/json");
+
+  int httpCode = http.POST(jsonData);  // Send POST request with the coordinates
+  if (httpCode > 0) {
+    Serial.println("Successfully sent data to server. Response code: " + String(httpCode));
+  } else {
+    Serial.println("Error sending data to server. Response code: " + String(httpCode));
+  }
+
+  http.end();  // End the HTTP request
+}

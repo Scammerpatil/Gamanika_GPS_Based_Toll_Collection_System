@@ -70,5 +70,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/not-approved", "/user/:path*", "/admin/:path*"],
+  matcher: ["/", "/user/:path*", "/admin/:path*"],
 };

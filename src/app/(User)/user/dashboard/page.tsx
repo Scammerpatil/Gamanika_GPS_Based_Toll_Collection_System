@@ -1,12 +1,18 @@
 "use client";
 import { useUserContext } from "@/context/context";
 import { Vehicle } from "@/types/vehicle";
-import { UserIcon, Car, CreditCard, ShieldCheck } from "lucide-react";
+import { UserIcon, Car, CreditCard, CopyCheck, HardDrive } from "lucide-react";
 import React from "react";
+import toast from "react-hot-toast";
 
 const UserDashboard = () => {
   const { user } = useUserContext();
   if (!user) return <>Loading...</>;
+
+  const handleCopy = ({ text }: { text: string }) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Copied to clipboard");
+  };
 
   return (
     <div className="bg-transparent flex items-center justify-center p-6">
@@ -94,6 +100,33 @@ const UserDashboard = () => {
             </p>
             <p>
               <strong>Upcoming Due:</strong> 20th Oct 2024
+            </p>
+            <div className="card-actions justify-end mt-4">
+              <button className="btn btn-accent btn-sm">Payment History</button>
+            </div>
+          </div>
+        </div>
+        {/* Unique Number */}
+        <div className="card w-96 bg-base-100 shadow-xl">
+          <div className="card-body">
+            <div className="flex items-center space-x-3">
+              <HardDrive className="text-primary h-6 w-6" />
+              <h2 className="card-title">Unique Number For hardware</h2>
+            </div>
+            <p>
+              <strong>Vehicle Unique Number:</strong>
+              <div className="mockup-code">
+                <pre className="bg-success text-success-content flex flex-row justify-between">
+                  <code>{user.vehicle[0].uniqueVehicleNumber}</code>
+                  <button
+                    onClick={() =>
+                      handleCopy({ text: user.vehicle[0].uniqueVehicleNumber })
+                    }
+                  >
+                    <CopyCheck />
+                  </button>
+                </pre>
+              </div>
             </p>
             <div className="card-actions justify-end mt-4">
               <button className="btn btn-accent btn-sm">Payment History</button>

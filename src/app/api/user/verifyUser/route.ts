@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const data = jwt.verify(token, process.env.JWT_SECRET) as jwt.JwtPayload;
     const user = await User.findById(data.id).populate("vehicle");
 
     if (!user) {

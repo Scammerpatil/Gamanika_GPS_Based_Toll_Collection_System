@@ -16,12 +16,14 @@ const SignUp = ({ router }: { router: any }) => {
     username: "",
     isVerified: false,
     isAdminApproved: false,
+    vehicle: [],
   });
   const [disabled, setDisabled] = useState<boolean>(true);
   const [otp, setOTP] = useState<string>("");
   const [userOTP, setUserOTP] = useState<string>("");
   const [passwordVisibilty, setPasswordVisibilty] = useState(false);
   const [vehicleDetails, setVehicleDetails] = useState<Vehicle>({
+    uniqueVehicleNumber: "",
     registrationNumber: "",
     taxMode: "",
     registrationDate: new Date(),
@@ -85,6 +87,7 @@ const SignUp = ({ router }: { router: any }) => {
     const response = JSON.parse(localStorage.getItem("vehicleData") || "{}");
     if (response.result?.reg_no == vehicleDetails?.registrationNumber) {
       setVehicleDetails({
+        uniqueVehicleNumber: response.result.unique_vehicle_no,
         registrationNumber: response.result.reg_no,
         registrationDate: new Date(response.result.reg_date),
         vehicleType: response.result.vehicle_type,

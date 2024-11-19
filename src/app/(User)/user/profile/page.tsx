@@ -44,12 +44,12 @@ const UserProfile = () => {
               <span>{user.email}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-semibold">Phone Number:</span>
-              <span>{user.phone || "Not Provided"}</span>
+              <span className="font-semibold">User Name:</span>
+              <span>{user.username || "Not Provided"}</span>
             </div>
             <div className="flex justify-between">
               <span className="font-semibold">Address:</span>
-              <span>{user.address || "Not Provided"}</span>
+              <span>{user.vehicle[0] || "Not Provided"}</span>
             </div>
           </div>
 

@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 import ToastContainer from "@/components/ToastContainer";
 import ScrollToTop from "@/components/ScrollToTop";
 import { Inter } from "next/font/google";
-import "react-modal-video/css/modal-video.css";
 import "@/styles/index.css";
 
 const inter = Inter({ subsets: ["latin"] });

@@ -87,7 +87,7 @@ const AdminUserTable = () => {
         {users.length > 0 ? (
           users.map((user: UserType) => (
             <div
-              key={user._id.toString()}
+              key={user._id?.toString()}
               className="card w-full bg-white shadow-xl dark:bg-base-200"
             >
               <figure className="p-4">

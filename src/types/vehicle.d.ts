@@ -1,0 +1,32 @@
+export type Vehicle = {
+  uniqueVehicleNumber: string;
+  registrationNumber: string;
+  registrationDate: Date;
+  vehicleType: string;
+  vehicleClass: string;
+  vehicleCategory: string;
+  chassisNo: number;
+  engineNo: num;
+  fuelType?: string;
+  manufacturingYear: number;
+  vehicleColor: string;
+  vehicleVerified: boolean;
+  vehicleSeatCapacity?: number;
+  vehicleGrossWeight: number;
+  state: string;
+  taxMode?: string;
+  purchaseDate: Date;
+  vehicleManufacturerName?: string;
+  modelCode?: string;
+  model?: string;
+  body?: string;
+  cylindersNo?: number;
+  vehicleHp?: number;
+  vehicleUnladenWeight?: number;
+  vehicleGrossCombWeight?: number;
+  wheelBase?: number;
+  permitDetails?: {
+    permitType?: string;
+    permitValidUpto?: Date;
+  };
+};

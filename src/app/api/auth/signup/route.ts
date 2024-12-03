@@ -2,15 +2,14 @@ import UserModel from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import dbConfig from "@/middlewares/db.config";
+import Vehicle from "@/models/Vehicle";
 
 dbConfig();
 
 export async function POST(req: NextRequest) {
   try {
-    const { fullName, username, email, password, isVerified, vehicle } =
+    const { fullName, username, email, password, isVerified, vehicleDetails } =
       await req.json();
-
-    console.log("Vehicle:", vehicle.vehicleCatg);
 
     if (
       !fullName ||
@@ -18,7 +17,7 @@ export async function POST(req: NextRequest) {
       !email ||
       !password ||
       !isVerified ||
-      !vehicle
+      !vehicleDetails
     ) {
       return NextResponse.json(
         { message: "Please provide all the required fields" },
@@ -27,9 +26,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate password length
-    if (password.length < 6) {
+    if (password.length < 8) {
       return NextResponse.json(
-        { message: "Password must be at least 6 characters long" },
+        { message: "Password must be at least 8 characters long" },
         { status: 400 }
       );
     }
@@ -39,6 +38,16 @@ export async function POST(req: NextRequest) {
     if (userExists) {
       return NextResponse.json(
         { message: "User already exists" },
+        { status: 400 }
+      );
+    }
+    // Check if the vehicle already exists
+    const vehicleExits = await Vehicle.findOne({
+      registrationNumber: vehicleDetails.registrationNumber,
+    });
+    if (vehicleExits) {
+      return NextResponse.json(
+        { message: "Vehicle already exists" },
         { status: 400 }
       );
     }
@@ -52,59 +61,61 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if the vehicle number plate already exists
-    const vehicleNumberExists = await UserModel.findOne({
-      "vehicle.vehicleNumberPlate": vehicle.vehicleNumberPlate,
-    });
-    if (vehicleNumberExists) {
-      return NextResponse.json(
-        { message: "Vehicle Number Plate already exists" },
-        { status: 400 }
-      );
-    }
-
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     var tollRate = 0;
 
-    switch (vehicle.vehicleCategory) {
+    switch (vehicleDetails.vehicleCategory) {
       case "MC 50CC":
       case "MCWOG/FVG":
       case "MC EX50CC":
       case "M/CYCL WG":
-        tollRate = 0; // Tax for motorcycles
+        tollRate = 0;
         break;
       case "LMV":
       case "LMV-NT":
-        tollRate = 70; // Example rate for light motor vehicles
+        tollRate = 70 / 60;
         break;
       case "MGV":
-        tollRate = 100; // Example rate for medium goods vehicle
+        tollRate = 100 / 60;
         break;
       case "HMV":
       case "HGMV":
       case "HPMV":
       case "HTV":
-        tollRate = 150; // Example rate for heavy vehicles
+        tollRate = 150 / 60;
         break;
       case "Trailer":
-        tollRate = 90; // Example rate for trailers
+        tollRate = 90 / 60;
         break;
       default:
-        tollRate = 100; // Default rate if no match found
+        tollRate = 100 / 60;
     }
-
+    const getAsciiRepresentation = (name: string) => {
+      return name
+        .split("")
+        .map((char) => char.charCodeAt(0))
+        .join("");
+    };
+    const uniqueVehicleNumber =
+      vehicleDetails.registrationNumber +
+      "-" +
+      getAsciiRepresentation(username.slice(0, 3));
+    const newVehicle = new Vehicle({
+      ...vehicleDetails,
+      tollRate,
+      uniqueVehicleNumber,
+    });
+    await newVehicle.save();
     // Create a new user
     const newUser = new UserModel({
       fullName,
       username,
       email,
       isAdminApproved: false,
-      role: "user",
       password: hashedPassword,
       isVerified,
-      vehicle,
-      tollRate,
+      vehicle: newVehicle._id,
     });
 
     // Save the user to the database

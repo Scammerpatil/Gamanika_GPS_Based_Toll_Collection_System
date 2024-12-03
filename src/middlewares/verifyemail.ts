@@ -5,8 +5,8 @@ import fs from "fs";
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   auth: {
-    user: "sauravpatil453@gmail.com",
-    pass: "egiotrqglapdsrkr",
+    user: "novacops.rcpit@gmail.com",
+    pass: "cvrwlvkrohgbqmse",
   },
 });
 

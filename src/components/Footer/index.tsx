@@ -1,12 +1,13 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import MyImage from "../Header/MyImage";
 
 const Footer = () => {
   return (
     <>
       <footer
-        className="wow fadeInUp relative z-10 bg-white pt-16 dark:bg-gray-dark md:pt-20 lg:pt-24"
+        className="wow fadeInUp relative z-10 bg-base-200 px-14 pt-16 dark:bg-gray-dark md:pt-20 lg:pt-24"
         data-wow-delay=".1s"
       >
         <div className="container">
@@ -14,20 +15,7 @@ const Footer = () => {
             <div className="w-full px-4 md:w-1/2 lg:w-4/12 xl:w-5/12">
               <div className="mb-12 max-w-[360px] lg:mb-16">
                 <Link href="/" className="mb-8 inline-block">
-                  <Image
-                    src="/images/logo/logo-2.svg"
-                    alt="logo"
-                    className="w-full dark:hidden"
-                    width={140}
-                    height={30}
-                  />
-                  <Image
-                    src="/images/logo/logo.svg"
-                    alt="logo"
-                    className="hidden w-full dark:block"
-                    width={140}
-                    height={30}
-                  />
+                  <MyImage />
                 </Link>
                 <p className="text-base text-body-color dark:text-body-color-dark mb-8">
                   Gamanika is revolutionizing highway toll collection with
@@ -39,7 +27,7 @@ const Footer = () => {
                   <a
                     href="/"
                     aria-label="social-link"
-                    className="mr-6 text-body-color duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
+                    className="mr-6 text-body-color duration-300 hover:text-primary"
                   >
                     <svg
                       width="9"
@@ -101,7 +89,7 @@ const Footer = () => {
 
             <div className="w-full px-4 sm:w-1/2 md:w-1/3 lg:w-2/12">
               <div className="mb-12 lg:mb-16">
-                <h2 className="mb-10 text-lg font-semibold text-dark dark:text-white">
+                <h2 className="mb-10 text-lg font-semibold text-base-content">
                   Company
                 </h2>
                 <ul>
@@ -143,7 +131,7 @@ const Footer = () => {
 
             <div className="w-full px-4 sm:w-1/2 md:w-1/3 lg:w-2/12">
               <div className="mb-12 lg:mb-16">
-                <h4 className="mb-10 text-lg font-semibold text-dark dark:text-white">
+                <h4 className="mb-10 text-lg font-semibold text-base-content">
                   Resources
                 </h4>
                 <ul>
@@ -185,7 +173,7 @@ const Footer = () => {
 
             <div className="w-full px-4 sm:w-1/2 md:w-1/3 lg:w-2/12">
               <div className="mb-12 lg:mb-16">
-                <h4 className="mb-10 text-lg font-semibold text-dark dark:text-white">
+                <h4 className="mb-10 text-lg font-semibold text-base-content">
                   Contact Us
                 </h4>
                 <ul>
@@ -205,7 +193,7 @@ const Footer = () => {
 
           <div className="h-px w-full bg-gradient-to-r from-transparent via-[#D2D8E183] to-transparent dark:via-[#959CB183]"></div>
           <div className="py-8">
-            <p className="text-center text-base text-body-color dark:text-white">
+            <p className="text-center text-base text-base-content">
               © {new Date().getFullYear()} Gamanika. All Rights Reserved.{" "}
               <span>Made with love by team NovaCop</span>
             </p>
@@ -340,8 +328,8 @@ const Footer = () => {
                 y2="59.8878"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stopColor="#4A6CF7" stopOpacity="0.62" />
-                <stop offset="1" stopColor="#4A6CF7" stopOpacity="0" />
+                <stop stopColor="currentColor" stopOpacity="0.62" />
+                <stop offset="1" stopColor="currentColor" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint1_linear_94:889"
@@ -351,8 +339,8 @@ const Footer = () => {
                 y2="20.668"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stopColor="#4A6CF7" stopOpacity="0" />
-                <stop offset="1" stopColor="#4A6CF7" stopOpacity="0.51" />
+                <stop stopColor="currentColor" stopOpacity="0" />
+                <stop offset="1" stopColor="currentColor" stopOpacity="0.51" />
               </linearGradient>
               <linearGradient
                 id="paint2_linear_94:889"
@@ -362,8 +350,8 @@ const Footer = () => {
                 y2="25.1062"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stopColor="#4A6CF7" stopOpacity="0.62" />
-                <stop offset="1" stopColor="#4A6CF7" stopOpacity="0" />
+                <stop stopColor="currentColor" stopOpacity="0.62" />
+                <stop offset="1" stopColor="currentColor" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint3_linear_94:889"
@@ -373,8 +361,8 @@ const Footer = () => {
                 y2="80.6826"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stopColor="#4A6CF7" stopOpacity="0" />
-                <stop offset="1" stopColor="#4A6CF7" stopOpacity="0.51" />
+                <stop stopColor="currentColor" stopOpacity="0" />
+                <stop offset="1" stopColor="currentColor" stopOpacity="0.51" />
               </linearGradient>
               <linearGradient
                 id="paint4_linear_94:889"
@@ -384,8 +372,8 @@ const Footer = () => {
                 y2="58.2156"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stopColor="#4A6CF7" stopOpacity="0.62" />
-                <stop offset="1" stopColor="#4A6CF7" stopOpacity="0" />
+                <stop stopColor="currentColor" stopOpacity="0.62" />
+                <stop offset="1" stopColor="currentColor" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint5_linear_94:889"
@@ -395,8 +383,8 @@ const Footer = () => {
                 y2="41.6598"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stopColor="#4A6CF7" stopOpacity="0" />
-                <stop offset="1" stopColor="#4A6CF7" stopOpacity="0.51" />
+                <stop stopColor="currentColor" stopOpacity="0" />
+                <stop offset="1" stopColor="currentColor" stopOpacity="0.51" />
               </linearGradient>
             </defs>
           </svg>

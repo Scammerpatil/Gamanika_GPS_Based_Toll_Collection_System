@@ -1,10 +1,11 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
+import MyImage from "./MyImage";
+import SignIn from "../Dialogs/SignIn";
 
 const Header = () => {
   // Navbar toggle
@@ -26,7 +27,7 @@ const Header = () => {
     window.addEventListener("scroll", handleStickyNavbar);
   });
 
-  // submenu handler
+  // Submenu handler
   const [openIndex, setOpenIndex] = useState(-1);
   const handleSubmenu = (index: any) => {
     if (openIndex === index) {
@@ -37,42 +38,33 @@ const Header = () => {
   };
 
   const usePathName = usePathname();
+  const router = useRouter();
 
   return (
     <>
       <header
         className={`header left-0 top-0 z-40 flex w-full items-center ${
           sticky
-            ? "fixed z-[9999] bg-white !bg-opacity-80 shadow-sticky backdrop-blur-sm transition dark:bg-gray-dark dark:shadow-sticky-dark"
+            ? "fixed z-[9999] bg-base-200 !bg-opacity-80 shadow-sticky backdrop-blur-sm transition dark:bg-gray-dark dark:shadow-sticky-dark"
             : "absolute bg-transparent"
         }`}
       >
         <div className="container">
-          <div className="relative -mx-4 flex items-center justify-between">
+          <div className="relative mx-10 flex items-center justify-between">
             <div className="w-60 max-w-full px-4 xl:mr-12">
               <Link
                 href="/"
                 className={`header-logo block w-full ${
-                  sticky ? "py-5 lg:py-2" : "py-8"
+                  sticky ? "py-5 lg:py-2" : "py-6"
                 } `}
               >
-                <Image
-                  src="/images/logo/logo-2.svg"
-                  alt="logo"
-                  width={140}
-                  height={30}
-                  className="w-full dark:hidden"
-                />
-                <Image
-                  src="/images/logo/logo.svg"
-                  alt="logo"
-                  width={140}
-                  height={30}
-                  className="hidden w-full dark:block"
-                />
+                <MyImage />
               </Link>
             </div>
-            <div className="flex w-full items-center justify-between px-4">
+            <div className="flex w-full items-center justify-end gap-14 px-4">
+              <div className="lg:hidden">
+                <ThemeToggler />
+              </div>
               <div>
                 <button
                   onClick={navbarToggleHandler}
@@ -81,24 +73,24 @@ const Header = () => {
                   className="absolute right-4 top-1/2 block translate-y-[-50%] rounded-lg px-3 py-[6px] ring-primary focus:ring-2 lg:hidden"
                 >
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
+                    className={`relative my-1.5 block h-0.5 w-[30px] bg-base-content transition-all duration-300 ${
                       navbarOpen ? " top-[7px] rotate-45" : " "
                     }`}
                   />
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
+                    className={`relative my-1.5 block h-0.5 w-[30px] bg-base-content transition-all duration-300 ${
                       navbarOpen ? "opacity-0 " : " "
                     }`}
                   />
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
+                    className={`relative my-1.5 block h-0.5 w-[30px] bg-base-content transition-all duration-300 ${
                       navbarOpen ? " top-[-8px] -rotate-45" : " "
                     }`}
                   />
                 </button>
                 <nav
                   id="navbarCollapse"
-                  className={`navbar absolute right-0 z-30 w-[250px] rounded border-[.5px] border-body-color/50 bg-white px-6 py-4 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100 ${
+                  className={`navbar flex flex-col absolute right-0 z-30 w-[250px] rounded border-[.5px] border-body-color/50 bg-base-300 px-6 py-4 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100 ${
                     navbarOpen
                       ? "visibility top-full opacity-100"
                       : "invisible top-[120%] opacity-0"
@@ -112,8 +104,8 @@ const Header = () => {
                             href={menuItem.path}
                             className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 ${
                               usePathName === menuItem.path
-                                ? "text-primary dark:text-white"
-                                : "text-dark hover:text-primary dark:text-white/70 dark:hover:text-white"
+                                ? "text-primary"
+                                : "text-dark hover:text-primary"
                             }`}
                           >
                             {menuItem.title}
@@ -122,7 +114,7 @@ const Header = () => {
                           <>
                             <p
                               onClick={() => handleSubmenu(index)}
-                              className="flex cursor-pointer items-center justify-between py-2 text-base text-dark group-hover:text-primary dark:text-white/70 dark:group-hover:text-white lg:mr-0 lg:inline-flex lg:px-0 lg:py-6"
+                              className="flex cursor-pointer items-center justify-between py-2 text-base text-dark group-hover:text-primary lg:mr-0 lg:inline-flex lg:px-0 lg:py-6"
                             >
                               {menuItem.title}
                               <span className="pl-3">
@@ -141,38 +133,74 @@ const Header = () => {
                                 openIndex === index ? "block" : "hidden"
                               }`}
                             >
-                              {menuItem.submenu.map((submenuItem, index) => (
-                                <Link
-                                  href={submenuItem.path}
-                                  key={index}
-                                  className="block rounded py-2.5 text-sm text-dark hover:text-primary dark:text-white/70 dark:hover:text-white lg:px-3"
-                                >
-                                  {submenuItem.title}
-                                </Link>
-                              ))}
+                              {menuItem.submenu &&
+                                menuItem.submenu.map((submenuItem, index) => (
+                                  <Link
+                                    href={submenuItem.path || "/"}
+                                    key={index}
+                                    className="block rounded py-2.5 text-sm text-dark hover:text-primary  lg:px-3"
+                                  >
+                                    {submenuItem.title}
+                                  </Link>
+                                ))}
                             </div>
                           </>
                         )}
                       </li>
                     ))}
                   </ul>
+                  {/* Sign In and Sign Up Buttons for Mobile */}
+                  <span className="flex flex-col items-center mt-4 lg:hidden">
+                    <button
+                      className="px-7 py-3 text-accent-content bg-accent font-medium hover:opacity-70"
+                      onClick={() => {
+                        (
+                          document.getElementById("login") as HTMLDialogElement
+                        ).showModal();
+                      }}
+                    >
+                      Sign In
+                    </button>
+                    <button
+                      onClick={() => {
+                        (
+                          document.getElementById("signup") as HTMLDialogElement
+                        ).showModal();
+                      }}
+                      className="mt-2 rounded-sm bg-primary px-7 py-3 font-medium text-primary-content shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover"
+                    >
+                      Sign Up
+                    </button>
+                  </span>
                 </nav>
               </div>
-              <div className="flex items-center justify-end pr-16 lg:pr-0">
-                <Link
-                  href="/signin"
-                  className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-70 dark:text-white md:block"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="ease-in-up hidden rounded-sm bg-primary px-8 py-3 text-base font-medium text-white shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover md:block md:px-9 lg:px-6 xl:px-9"
-                >
-                  Sign Up
-                </Link>
+              <div className="gap-5 pr-16 lg:pr-0 hidden lg:flex lg:items-center justify-end">
+                {/* Sign In and Sign Up Buttons for Desktop */}
+                <span className="flex gap-5">
+                  <button
+                    className="px-7 py-3 text-accent-content bg-accent font-medium hover:opacity-70"
+                    onClick={() => {
+                      (
+                        document.getElementById("login") as HTMLDialogElement
+                      ).showModal();
+                    }}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => {
+                      (
+                        document.getElementById("signup") as HTMLDialogElement
+                      ).showModal();
+                    }}
+                    className="rounded-sm bg-primary px-7 py-3 font-medium text-primary-content shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover"
+                  >
+                    Sign Up
+                  </button>
+                </span>
                 <div>
                   <ThemeToggler />
+                  <SignIn router={router} />
                 </div>
               </div>
             </div>

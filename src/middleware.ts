@@ -11,12 +11,11 @@ const verifyToken = async (token: string) => {
       body: JSON.stringify({ token }),
     });
 
-    const contentType = response.headers.get("content-type");
     if (!response.ok) throw new Error("Token verification failed");
 
+    const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
-      const data = await response.json();
-      return data;
+      return await response.json();
     } else {
       throw new Error("Response was not JSON");
     }
@@ -28,69 +27,48 @@ const verifyToken = async (token: string) => {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const isPublicPath = [
-    "/",
-    "/signin",
-    "/signup",
-    "/about",
-    "/contact",
-  ].includes(pathname);
+  const isPublicPath = ["/"].includes(pathname);
+
   const token = req.cookies.get("token")?.value || "";
   const isLoggedIn = !!token;
 
-  if (isLoggedIn) {
-    const user = await verifyToken(token);
-    if (user) {
-      const { role, isAdminApproved } = user.data;
-
-      if (isPublicPath) {
-        let redirectPath = "/";
-        switch (role) {
-          case "user":
-            redirectPath = isAdminApproved
-              ? "/user/dashboard"
-              : "/not-approved";
-            break;
-          case "admin":
-            redirectPath = "/admin/dashboard";
-            break;
-          default:
-            redirectPath = "/";
-        }
-        return NextResponse.redirect(new URL(redirectPath, req.nextUrl.origin));
-      } else {
-        if (!isAdminApproved) {
-          return NextResponse.redirect(
-            new URL("/not-approved", req.nextUrl.origin)
-          );
-        }
-        return NextResponse.next();
-      }
-    } else {
-      // Clear the token cookie and redirect to signin
-      const response = NextResponse.redirect(
-        new URL("/signin", req.nextUrl.origin)
-      );
-      return response;
-    }
+  if (!isLoggedIn && !isPublicPath) {
+    console.log("Not logged in, redirecting to public login page");
+    return NextResponse.redirect(new URL("/", req.nextUrl.origin));
   }
 
-  if (!isPublicPath && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/signin", req.nextUrl.origin));
+  if (isLoggedIn) {
+    const user = await verifyToken(token);
+    if (!user.data) {
+      console.log("Token verification failed, redirecting to login");
+      return NextResponse.redirect(new URL("/", req.nextUrl.origin));
+    }
+
+    const { role, isAdminApproved } = user.data;
+
+    if (isAdminApproved) {
+      const dashboardPath = `/${role}/dashboard`;
+
+      if (isPublicPath) {
+        return NextResponse.redirect(
+          new URL(dashboardPath, req.nextUrl.origin)
+        );
+      }
+
+      return NextResponse.next();
+    }
+
+    if (!isAdminApproved) {
+      console.log("User is not admin approved, redirecting to 'not-approved'");
+      return NextResponse.redirect(
+        new URL("/not-approved", req.nextUrl.origin)
+      );
+    }
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/",
-    "/signin",
-    "/signup",
-    "/contact",
-    "/about",
-    "/not-found",
-    "/user/:path*",
-    "/admin/:path*",
-  ],
+  matcher: ["/", "/user/:path*", "/admin/:path*"],
 };

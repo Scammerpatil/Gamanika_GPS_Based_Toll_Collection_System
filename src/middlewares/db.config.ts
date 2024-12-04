@@ -1,5 +1,3 @@
-import User from "@/models/User";
-import Vehicle from "@/models/Vehicle";
 import mongoose from "mongoose";
 
 // Database Connection
@@ -17,8 +15,6 @@ const dbConfig = async () => {
   } catch (error) {
     console.log("Error: ", error);
   }
-  User;
-  Vehicle;
 };
 
 export default dbConfig;

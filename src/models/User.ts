@@ -1,3 +1,4 @@
+import { User } from "@/types/user";
 import mongoose, { Schema } from "mongoose";
 
 const UserSchema: Schema = new Schema(
@@ -28,6 +29,14 @@ const UserSchema: Schema = new Schema(
       type: Boolean,
       default: false,
     },
+    profileImageUrl: {
+      type: String,
+      required: true,
+    },
+    carImageUrl: {
+      type: String,
+      required: true,
+    },
     role: {
       type: String,
       required: true,
@@ -46,7 +55,7 @@ const UserSchema: Schema = new Schema(
 );
 
 UserSchema.pre("save", function (next) {
-  const user = this as any;
+  const user = this as unknown as User;
   const name = user.fullName.toLowerCase().split(" ");
   user.fullName = name
     .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))

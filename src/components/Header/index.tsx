@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
@@ -29,7 +29,7 @@ const Header = () => {
 
   // Submenu handler
   const [openIndex, setOpenIndex] = useState(-1);
-  const handleSubmenu = (index: any) => {
+  const handleSubmenu = (index: number) => {
     if (openIndex === index) {
       setOpenIndex(-1);
     } else {
@@ -38,7 +38,6 @@ const Header = () => {
   };
 
   const usePathName = usePathname();
-  const router = useRouter();
 
   return (
     <>
@@ -200,7 +199,7 @@ const Header = () => {
                 </span>
                 <div>
                   <ThemeToggler />
-                  <SignIn router={router} />
+                  <SignIn />
                 </div>
               </div>
             </div>

@@ -2,7 +2,7 @@ import formatDate from "@/helper/DateFormatter";
 import { Vehicle } from "@/types/vehicle";
 
 const VehicleDataTable = ({ vehicleData }: { vehicleData: Vehicle }) => {
-  const displayValue = (value: any) => {
+  const displayValue = (value: unknown) => {
     if (value instanceof Date) {
       return formatDate(value);
     } else if (typeof value === "string" && !isNaN(Date.parse(value))) {
@@ -43,7 +43,7 @@ const VehicleDataTable = ({ vehicleData }: { vehicleData: Vehicle }) => {
                           {key}
                         </td>
                         <td className="border-t border-base-300 px-4 py-2 text-base-content">
-                          {formattedValue}
+                          {formattedValue as React.ReactNode}
                         </td>
                       </tr>
                     ) : null;

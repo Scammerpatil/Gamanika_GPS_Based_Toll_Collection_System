@@ -1,12 +1,13 @@
-import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import axios from "axios";
-import { Eye, EyeOffIcon, X } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import SignUp from "./SignUp";
+import { useRouter } from "next/navigation";
 
-const SignIn = ({ router }: { router: any }) => {
-  const [passwordVisibilty, setPasswordVisibilty] = useState(false);
+const SignIn = () => {
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState({
     identifier: "",
     password: "",
@@ -27,13 +28,9 @@ const SignIn = ({ router }: { router: any }) => {
           return error.response.data.message;
         },
       });
-    } catch (error: any) {
-      toast.error(error?.toString());
+    } catch (error: unknown) {
+      toast.error(`Failed to logout, ${String(error)}`);
     }
-  };
-  // Password Visibility
-  const handleClickShowPassword = () => {
-    setPasswordVisibilty(!passwordVisibilty);
   };
   return (
     <>
@@ -74,34 +71,36 @@ const SignIn = ({ router }: { router: any }) => {
                           className="w-full rounded-sm border border-stroke px-6 py-3 outline-none transition-all duration-300 focus:border-primary bg-base-200 text-base-content"
                         />
                       </div>
-                      <div className="mb-8">
-                        <label
-                          htmlFor="password"
-                          className="mb-3 block text-sm text-base-content"
-                        >
-                          Your Password
+                      <div className="mb-4 relative">
+                        <label className="mb-3 block text-sm text-base-content">
+                          Password
                         </label>
-                        <OutlinedInput
-                          className="h-[50px] w-full rounded-sm border border-stroke px-3 py-3 outline-none transition-all duration-300 focus:border-primary bg-base-200 text-base-content"
-                          type={passwordVisibilty ? "text" : "password"}
-                          value={user.password}
-                          placeholder="Enter your Password"
-                          onChange={(e) =>
-                            setUser({ ...user, password: e.target.value })
-                          }
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                                edge="end"
-                                className="text-base-content"
-                              >
-                                {passwordVisibilty ? <EyeOffIcon /> : <Eye />}
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                        />
+                        <div className="relative">
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={user.password}
+                            onChange={(e) =>
+                              setUser({
+                                ...user,
+                                password: e.target.value,
+                              })
+                            }
+                            className="w-full rounded-sm border border-stroke px-6 py-3 outline-none transition-all duration-300 focus:border-primary bg-base-200 text-base-content"
+                            placeholder="Enter Password"
+                            required
+                          />
+                          <span
+                            className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-base-content"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <EyeOff size={20} />
+                            ) : (
+                              <Eye size={20} />
+                            )}
+                          </span>
+                        </div>
                       </div>
                       <div className="mb-8 flex flex-col justify-between sm:flex-row sm:items-center">
                         <div className="mb-4 sm:mb-0">
@@ -155,7 +154,7 @@ const SignIn = ({ router }: { router: any }) => {
                         </button>
                       </div>
                       <p className="text-center text-base font-medium text-body-color">
-                        Don't you have an account?{" "}
+                        Don&apos;t you have an account?{" "}
                         <button
                           className="text-primary hover:underline"
                           onClick={() => {
@@ -247,7 +246,7 @@ const SignIn = ({ router }: { router: any }) => {
           </form>
         </div>
       </dialog>
-      <SignUp router={router} />
+      <SignUp />
     </>
   );
 };

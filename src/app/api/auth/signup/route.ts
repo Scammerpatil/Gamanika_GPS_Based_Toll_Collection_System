@@ -8,8 +8,16 @@ dbConfig();
 
 export async function POST(req: NextRequest) {
   try {
-    const { fullName, username, email, password, isVerified, vehicleDetails } =
-      await req.json();
+    const {
+      fullName,
+      username,
+      email,
+      password,
+      isVerified,
+      vehicleDetails,
+      profileImageUrl,
+      carImageUrl,
+    } = await req.json();
 
     if (
       !fullName ||
@@ -17,6 +25,8 @@ export async function POST(req: NextRequest) {
       !email ||
       !password ||
       !isVerified ||
+      !profileImageUrl ||
+      !carImageUrl ||
       !vehicleDetails
     ) {
       return NextResponse.json(
@@ -63,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = bcrypt.hashSync(password, 10);
 
-    var tollRate = 0;
+    let tollRate = 0;
 
     switch (vehicleDetails.vehicleCategory) {
       case "MC 50CC":
@@ -115,6 +125,8 @@ export async function POST(req: NextRequest) {
       isAdminApproved: false,
       password: hashedPassword,
       isVerified,
+      profileImageUrl,
+      carImageUrl,
       vehicle: newVehicle._id,
     });
 

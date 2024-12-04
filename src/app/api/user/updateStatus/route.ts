@@ -1,5 +1,4 @@
 import UserModel from "@/models/User";
-import mongoose, { Mongoose } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

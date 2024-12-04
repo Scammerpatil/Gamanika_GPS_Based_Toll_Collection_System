@@ -24,7 +24,7 @@ export default function RootLayout({
 }
 
 function AppContent({ children }: { children: React.ReactNode }) {
-  const { user, setUser } = useUserContext();
+  const { setUser } = useUserContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
       }
     };
     getUserFromToken();
-  }, [router]);
+  }, [router, setUser]);
 
   return (
     <html suppressHydrationWarning lang="en">
@@ -54,7 +54,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
       <body className={`${inter.className}`}>
         <ToastContainer />
         <ScrollToTop />
-        <SideNav children={children} router={router} />
+        <SideNav>{children}</SideNav>
       </body>
     </html>
   );

@@ -1,27 +1,24 @@
-import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import axios from "axios";
-import { Eye, EyeIcon, EyeOffIcon, X } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import VehicleDataTable from "./VehicleData";
 import { User } from "@/types/user";
 import { Vehicle } from "@/types/vehicle";
 
-const SignUp = ({ router }: { router: any }) => {
+const SignUp = () => {
   const [user, setUser] = useState<User>({
     fullName: "",
     email: "",
     password: "",
+    profileImageUrl: "",
+    carImageUrl: "",
     role: "user",
     username: "",
     isVerified: false,
     isAdminApproved: false,
     vehicle: [],
   });
-  const [disabled, setDisabled] = useState<boolean>(true);
-  const [otp, setOTP] = useState<string>("");
-  const [userOTP, setUserOTP] = useState<string>("");
-  const [passwordVisibilty, setPasswordVisibilty] = useState(false);
   const [vehicleDetails, setVehicleDetails] = useState<Vehicle>({
     uniqueVehicleNumber: "",
     registrationNumber: "",
@@ -54,10 +51,112 @@ const SignUp = ({ router }: { router: any }) => {
       permitValidUpto: new Date(),
     },
   });
+  const [disabled, setDisabled] = useState<boolean>(true);
+  const [otp, setOTP] = useState<string>("");
+  const [userOTP, setUserOTP] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [carImage, setCarImage] = useState<File | null>(null);
+  const [draggingProfile, setDraggingProfile] = useState(false);
+  const [draggingCar, setDraggingCar] = useState(false);
 
-  // Password Visibility
-  const handleClickShowPassword = () => {
-    setPasswordVisibilty(!passwordVisibilty);
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size exceeds 5MB");
+        return;
+      }
+      setProfileImage(file);
+    }
+  };
+  const handleCarImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size exceeds 5MB");
+        return;
+      }
+      setCarImage(file);
+    }
+  };
+  const handleProfileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDraggingProfile(false);
+    const file = e.dataTransfer.files[0];
+    if (
+      file &&
+      file.type.startsWith("image/") &&
+      file.size <= 5 * 1024 * 1024
+    ) {
+      setProfileImage(file);
+    } else {
+      alert("Invalid file. Only images under 5MB are allowed.");
+    }
+  };
+
+  useEffect(() => {
+    if (profileImage) {
+      const uploadImage = async () => {
+        const formData = new FormData();
+        formData.append("file", profileImage as Blob);
+        const imageResponse = axios.post("/api/helper/upload-img", formData);
+        toast.promise(imageResponse, {
+          loading: "Uploading Image...",
+          success: (data) => {
+            setUser({
+              ...user,
+              profileImageUrl: data.data.data.url,
+            });
+            return "Image Uploaded Successfully";
+          },
+          error: (err) => `This just happened: ${err.response.data.error}`,
+        });
+      };
+      uploadImage();
+    }
+  }, [profileImage, user]);
+  useEffect(() => {
+    if (carImage) {
+      const uploadImage = async () => {
+        const formData = new FormData();
+        formData.append("file", carImage as Blob);
+        const imageResponse = axios.post("/api/helper/upload-img", formData);
+        toast.promise(imageResponse, {
+          loading: "Uploading Image...",
+          success: (data) => {
+            setUser({ ...user, carImageUrl: data.data.data.url });
+            return "Image Uploaded Successfully";
+          },
+          error: (err) => `This just happened: ${err.response.data.error}`,
+        });
+      };
+      uploadImage();
+    }
+  }, [carImage, user]);
+
+  const handleCarDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDraggingCar(false);
+    const file = e.dataTransfer.files[0];
+    if (
+      file &&
+      file.type.startsWith("image/") &&
+      file.size <= 5 * 1024 * 1024
+    ) {
+      setCarImage(file);
+    } else {
+      alert("Invalid file. Only images under 5MB are allowed.");
+    }
+  };
+
+  const handleProfileImageDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDraggingProfile(true);
+  };
+  const handleCarImageDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDraggingCar(true);
   };
 
   // Verify Email
@@ -85,7 +184,7 @@ const SignUp = ({ router }: { router: any }) => {
   // Verify Vehicle
   const verifyVehicle = () => {
     const response = JSON.parse(localStorage.getItem("vehicleData") || "{}");
-    if (response.result?.reg_no == vehicleDetails?.registrationNumber) {
+    if (response.result?.reg_no === vehicleDetails?.registrationNumber) {
       setVehicleDetails({
         uniqueVehicleNumber: response.result.unique_vehicle_no,
         registrationNumber: response.result.reg_no,
@@ -120,8 +219,6 @@ const SignUp = ({ router }: { router: any }) => {
         taxMode: response.result.tax_mode,
         vehicleVerified: true,
       });
-
-      console.log(vehicleDetails);
     }
     setUser({ ...user, fullName: response.result.owner_name });
     return;
@@ -132,6 +229,7 @@ const SignUp = ({ router }: { router: any }) => {
       setDisabled(false);
     }
   }, [vehicleDetails, user]);
+
   // Handle Submit
   const handleSubmit = () => {
     if (user.isVerified && vehicleDetails.vehicleVerified) {
@@ -252,6 +350,72 @@ const SignUp = ({ router }: { router: any }) => {
                         <br />
                       </div>
                     </div>
+                    {/* Profile Image Url */}
+                    <div className="mb-8">
+                      <label
+                        htmlFor="profileImageUrl"
+                        className="mb-3 block text-sm text-base-content"
+                      >
+                        Upload Your Nice Photo
+                      </label>
+                      <div
+                        onDragOver={handleProfileImageDragOver}
+                        onDragLeave={() => setDraggingProfile(false)}
+                        onDrop={handleProfileDrop}
+                        className={`w-full rounded-sm border border-stroke bg-base-300 p-6 text-base-content text-center outline-none transition-all duration-300 ${
+                          draggingProfile
+                            ? "border-primary bg-base-200"
+                            : "border-stroke"
+                        }`}
+                      >
+                        {profileImage ? (
+                          <p>{profileImage.name}</p>
+                        ) : (
+                          <p>Drag & drop an image here, or click to upload</p>
+                        )}
+                        <input
+                          type="file"
+                          name="profileImageUrl"
+                          id="profileImageUrl"
+                          className="hidden"
+                          accept="image/* .png .jpeg .jpg"
+                          onChange={handleProfileImageChange}
+                        />
+                      </div>
+                    </div>
+                    {/* Car Image Url */}
+                    <div className="mb-8">
+                      <label
+                        htmlFor="profileImageUrl"
+                        className="mb-3 block text-sm text-base-content"
+                      >
+                        Upload Your Car Photo
+                      </label>
+                      <div
+                        onDragOver={handleCarImageDragOver}
+                        onDragLeave={() => setDraggingCar(false)}
+                        onDrop={handleCarDrop}
+                        className={`w-full rounded-sm border border-stroke bg-base-300 p-6 text-base-content text-center outline-none transition-all duration-300 ${
+                          draggingCar
+                            ? "border-primary bg-base-200"
+                            : "border-stroke"
+                        }`}
+                      >
+                        {carImage ? (
+                          <p>{carImage.name}</p>
+                        ) : (
+                          <p>Drag & drop an image here, or click to upload</p>
+                        )}
+                        <input
+                          type="file"
+                          name="profileImageUrl"
+                          id="profileImageUrl"
+                          className="hidden"
+                          accept="image/* .png .jpeg .jpg"
+                          onChange={handleCarImageChange}
+                        />
+                      </div>
+                    </div>
                     {/* Vehicle Number Plate */}
                     <div className="mb-8">
                       <label
@@ -304,36 +468,36 @@ const SignUp = ({ router }: { router: any }) => {
                       </div>
                     </div>
                     {/* Password */}
-                    <div className="mb-8">
-                      <label
-                        htmlFor="password"
-                        className="mb-3 block text-sm text-base-content"
-                      >
-                        {" "}
-                        Your Password{" "}
+                    <div className="mb-4 relative">
+                      <label className="mb-3 block text-sm text-base-content">
+                        Password
                       </label>
-                      <OutlinedInput
-                        className="h-[50px] w-full rounded-sm border border-stroke px-3 py-3 outline-none transition-all duration-300 focus:border-primary bg-base-200 text-base-content"
-                        type={passwordVisibilty ? "text" : "password"}
-                        value={user.password}
-                        placeholder="Password"
-                        onChange={(e) =>
-                          setUser({ ...user, password: e.target.value })
-                        }
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={handleClickShowPassword}
-                              edge="end"
-                              className="text-base-content"
-                            >
-                              {passwordVisibilty ? <EyeOffIcon /> : <EyeIcon />}
-                            </IconButton>
-                          </InputAdornment>
-                        }
-                        label="Password"
-                      />
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          value={user.password}
+                          onChange={(e) =>
+                            setUser({
+                              ...user,
+                              password: e.target.value,
+                            })
+                          }
+                          className="w-full rounded-sm border border-stroke px-6 py-3 outline-none transition-all duration-300 focus:border-primary bg-base-200 text-base-content"
+                          placeholder="Enter Password"
+                          required
+                        />
+                        <span
+                          className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-base-content"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff size={20} />
+                          ) : (
+                            <Eye size={20} />
+                          )}
+                        </span>
+                      </div>
                     </div>
                     <div className="mb-8 flex">
                       <label

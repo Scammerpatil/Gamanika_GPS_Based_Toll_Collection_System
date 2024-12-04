@@ -7,6 +7,8 @@ export interface User {
   username: string;
   email: string;
   password: string;
+  profileImageUrl: string;
+  carImageUrl: string;
   role: string;
   vehicle: vehicle[];
   isVerified: boolean;

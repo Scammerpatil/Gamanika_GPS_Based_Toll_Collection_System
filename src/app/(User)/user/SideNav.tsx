@@ -4,27 +4,23 @@ import { SideNavItem } from "@/types/types";
 import { SIDENAV_ITEMS } from "./constant";
 import { AlignJustify, ChevronDown, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useUserContext } from "@/context/context";
 import SideNavSkeleton from "../components/Skeletons/SideNavSkeleton";
 import UserDashboardSkeleton from "../components/Skeletons/UserDashboard";
+import Image from "next/image";
 
-const SideNav = ({
-  router,
-  children,
-}: {
-  router: any;
-  children: React.ReactNode;
-}) => {
+const SideNav = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
   const handleLogout = async () => {
     try {
       await axios.get("/api/auth/logout");
       toast.success("Logged out successfully");
-    } catch (error) {
-      toast.error("Failed to logout");
+    } catch (error: unknown) {
+      toast.error(`Failed to logout, ${String(error)}`);
     } finally {
       router.push("/");
     }
@@ -34,13 +30,18 @@ const SideNav = ({
 
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean);
-  if (!user) return <SideNavSkeleton children={<UserDashboardSkeleton />} />;
+  if (!user)
+    return (
+      <SideNavSkeleton>
+        <UserDashboardSkeleton />
+      </SideNavSkeleton>
+    );
 
   return (
     <>
-      <div className="drawer lg:drawer-open">
+      <div className="drawer lg:drawer-open max-h-screen">
         <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-        <div className="drawer-content flex flex-col overflow-hidden">
+        <div className="drawer-content flex flex-col">
           <div className="navbar justify-between bg-base-300 w-full pl-10">
             <div className="lg:flex items-center justify-end space-x-2 hidden ">
               <span className="text-base font-semibold">Home</span>
@@ -78,10 +79,12 @@ const SideNav = ({
                 <div className="flex items-center gap-4 bg-transparent">
                   <div className="dropdown dropdown-left cursor-pointer bg-transparent">
                     <div tabIndex={0} role="button" className="btn m-1 w-full">
-                      <img
-                        src="https://avatar.iran.liara.run/public"
+                      <Image
+                        src={user.profileImageUrl}
                         alt="Avatar"
                         className="h-12 w-12"
+                        width={48}
+                        height={48}
                       />
                     </div>
                     <ul
@@ -95,17 +98,12 @@ const SideNav = ({
                         </div>
                       </div>
 
-                      {/* User Name */}
                       <div className="flex items-center justify-center">
                         <span className="text-lg font-semibold">
                           {user && user.fullName}
                         </span>
                       </div>
-
-                      {/* Horizontal Rule */}
                       <hr className="my-2 border-base-content" />
-
-                      {/* Dropdown Items */}
                       <div className="flex flex-col">
                         <button
                           onClick={() => router.push("/account")}
@@ -132,16 +130,16 @@ const SideNav = ({
               </ul>
             </div>
           </div>
-          <div className="px-10 py-7">
+          <div>
             {" "}
-            <div className="flex">
-              <main className="flex-1">
+            <div className="flex flex-1">
+              <main className="flex-1 overflow-y-auto relative h-[87vh]">
                 <div className="relative">
-                  <div className="absolute left-0 top-0 z-[-1] bg-base-200 max-h-[85vh] w-full">
+                  <div className="absolute left-0 top-0 z-[-1] bg-base-200">
                     <svg
                       width="full"
-                      height="620"
-                      viewBox="0 0 1000 700"
+                      height="650"
+                      viewBox="0 0 1440 700"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
@@ -202,7 +200,7 @@ const SideNav = ({
                       </defs>
                     </svg>
                   </div>
-                  <main className="">{children}</main>
+                  <main className="overflow-x-auto">{children}</main>
                 </div>
               </main>
             </div>
@@ -221,9 +219,11 @@ const SideNav = ({
               className="flex h-16 w-full flex-row items-center justify-center space-x-3 border-b border-base-content md:justify-start md:px-6"
             >
               <span className="h-7 w-7 rounded-lg bg-base-200">
-                <img
+                <Image
                   src="https://res.cloudinary.com/dt4p19dzf/image/upload/v1726761424/gamanika/logo.png"
                   alt="logo"
+                  width={28}
+                  height={28}
                 />
               </span>
               <span className="text-xl font-bold text-base-content">

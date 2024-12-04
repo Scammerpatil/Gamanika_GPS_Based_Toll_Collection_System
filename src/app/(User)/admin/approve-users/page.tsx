@@ -1,21 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  User,
-  Chip,
-} from "@nextui-org/react";
 import { CircleCheck, Eye, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
-import { Button } from "@mui/material";
 import CardDetails from "@/components/CardDetails";
 import { User as UserType } from "@/types/user";
+import Image from "next/image";
 
 const AdminUserTable = () => {
   const [users, setUsers] = useState<UserType[]>([]);
@@ -75,28 +65,27 @@ const AdminUserTable = () => {
 
   const handleViewDetails = (user: UserType) => {
     setSelectedUser(user);
+    (document.getElementById("car-details") as HTMLDialogElement).showModal();
     setCardDetails(!cardDetails);
   };
 
   return (
     <div className="max-w-full px-4 py-6 bg-transparent">
-      <h1 className="mb-8 text-4xl font-bold text-center dark:text-zinc-200">
-        User Management
-      </h1>
+      <h1 className="mb-8 text-4xl font-bold text-center">User Management</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {users.length > 0 ? (
           users.map((user: UserType) => (
             <div
               key={user._id?.toString()}
-              className="card w-full bg-white shadow-xl dark:bg-base-200"
+              className="card w-full bg-base-300 shadow-xl"
             >
               <figure className="p-4">
-                <img
-                  src={
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTG8Hg7W_MXeeKhuUBPVB7FMrYOMhIUHdllpQ&s"
-                  }
+                <Image
+                  src={user.carImageUrl}
                   alt="User Avatar"
                   className="rounded-full w-32 h-32 mx-auto"
+                  height={100}
+                  width={100}
                 />
               </figure>
               <div className="card-body">
@@ -104,15 +93,15 @@ const AdminUserTable = () => {
                 <p className="text-center text-base-content">
                   {user.vehicle[0].model}
                 </p>
-                <p className="text-center text-gray-500">
+                <p className="text-center text-base-content">
                   {user.vehicle[0].registrationNumber}
                 </p>
-                <p className="text-center text-gray-400">
+                <p className="text-center text-base-content/80">
                   {user.vehicle[0].state}
                 </p>
 
                 <div className="flex justify-between items-center mt-4">
-                  <span className="badge badge-sm badge-primary">
+                  <span className="badge badge-lg badge-primary">
                     {user.isAdminApproved ? "Approved" : "Pending"}
                   </span>
                   <div className="flex space-x-2">
@@ -146,12 +135,12 @@ const AdminUserTable = () => {
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500">No users found</p>
+          <p className="text-center text-base-content/60">No users found</p>
         )}
       </div>
 
       {cardDetails && selectedUser ? (
-        <CardDetails vehicle={selectedUser.vehicle} user={selectedUser} />
+        <CardDetails vehicle={selectedUser.vehicle[0]} user={selectedUser} />
       ) : null}
     </div>
   );

@@ -27,10 +27,10 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ user });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.log(err);
     const errorMessage =
-      err.name === "JsonWebTokenError"
+      err instanceof Error && err.name === "JsonWebTokenError"
         ? "Invalid token"
         : "Token verification failed";
     return NextResponse.json({ error: errorMessage }, { status: 403 });

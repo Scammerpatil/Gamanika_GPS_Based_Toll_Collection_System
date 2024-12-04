@@ -10,10 +10,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export default async function POST(
-  email: string,
-): Promise<boolean> {
-  const template = fs.readFileSync("./helper/approvalEmailTemplate.ejs", "utf-8");
+export default async function POST(email: string): Promise<boolean> {
+  const template = fs.readFileSync(
+    "./helper/approvalEmailTemplate.ejs",
+    "utf-8"
+  );
   const mailOptions = {
     from: "NovaCops | No Reply <",
     to: email,

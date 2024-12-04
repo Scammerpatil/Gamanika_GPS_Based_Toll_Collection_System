@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       email: process.env.ADMIN_EMAIL,
       role: "admin",
       isAdminApproved: true,
-      name: "Admin",
+      fullName: "Admin",
       profileImageUrl: "https://sesrcp.in/Uploads/Logo/1595215490.png",
     };
     const token = generateToken(data);

@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 const UserDashboard = () => {
   const { user } = useUserContext();
-  if (!user) return <>Loading...</>;
+  if (!user) return <>Loading</>;
 
   const handleCopy = ({ text }: { text: string }) => {
     navigator.clipboard.writeText(text);

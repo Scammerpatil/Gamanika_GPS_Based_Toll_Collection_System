@@ -1,15 +1,14 @@
 "use client";
-import { useState } from "react";
 import Link from "next/link";
 import TypeWriter from "./TypeWriter";
 
 const Hero = () => {
-  const [text, setText] = useState([
+  const text = [
     "Revolutionizing Toll Collection",
     "Seamless GPS-Based Tolling",
     "Smart Highway Solutions",
     "Real-Time Distance-Based Tolling",
-  ]);
+  ];
   return (
     <>
       <section
@@ -27,15 +26,16 @@ const Hero = () => {
                   <TypeWriter text={text} />
                 </h1>
                 <p className="mb-12 text-base !leading-relaxed font-extralight text-body-color dark:text-body-color-dark sm:text-lg md:text-xl">
-                  Gamanika is set to revolutionize toll collection on India's
-                  highways. Our innovative system uses GPS technology to
-                  accurately calculate toll charges based on the distance you
-                  travel. This eliminates the need for toll booths and reduces
-                  traffic congestion, making your journey smoother and more
-                  efficient. With real-time updates and transparent pricing,
-                  Gamanika ensures that you only pay for the exact distance you
-                  cover, bringing a new level of convenience to road travel.
-                  Join us in transforming the future of highway transportation.
+                  Gamanika is set to revolutionize toll collection on
+                  India&apos;s highways. Our innovative system uses GPS
+                  technology to accurately calculate toll charges based on the
+                  distance you travel. This eliminates the need for toll booths
+                  and reduces traffic congestion, making your journey smoother
+                  and more efficient. With real-time updates and transparent
+                  pricing, Gamanika ensures that you only pay for the exact
+                  distance you cover, bringing a new level of convenience to
+                  road travel. Join us in transforming the future of highway
+                  transportation.
                 </p>
                 <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
                   <button

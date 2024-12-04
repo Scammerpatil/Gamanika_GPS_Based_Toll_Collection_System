@@ -1,6 +1,6 @@
 import Typewriter from "typewriter-effect";
 
-function index(props: any) {
+function index(props: { text: string[] }) {
   return (
     <>
       <Typewriter

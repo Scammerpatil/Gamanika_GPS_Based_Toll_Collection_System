@@ -3,16 +3,13 @@ import type { NextRequest } from "next/server";
 
 const verifyToken = async (token: string) => {
   try {
-    const response = await fetch(
-      "https://gamanika-gps-based-toll-collection-system.vercel.app/api/auth/verifytoken",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-      }
-    );
+    const response = await fetch("http://localhost:3000/api/auth/verifytoken", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token }),
+    });
 
     if (!response.ok) throw new Error("Token verification failed");
 

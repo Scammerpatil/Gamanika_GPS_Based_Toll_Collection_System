@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import dbConfig from "@/middlewares/db.config";
 import User from "@/models/User";
+import Vehicle from "@/models/Vehicle";
 
 dbConfig();
 
@@ -20,6 +21,9 @@ export async function GET(req: NextRequest) {
 
   try {
     const data = jwt.verify(token, process.env.JWT_SECRET) as jwt.JwtPayload;
+    const vehicle = await Vehicle.findOne({ user: data.id });
+    if (!vehicle) {
+    }
     const user = await User.findById(data.id).populate("vehicle");
 
     if (!user) {

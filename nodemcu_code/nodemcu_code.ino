@@ -10,13 +10,11 @@
 SoftwareSerial neo6m(gpsTxPin, gpsRxPin);
 
 TinyGPSPlus gps;
-//MH18BC4490-105116115
 
-const char *ssid = "Redmi 9A";
-const char *password = "00000000";
+const char *ssid = "Kali_Linux";  
+const char *password = "123456789";
 
-const char *serverUrl = "http://192.168.1.12:3000/api/trackVehicle/";
-//const char *serverUrl = "https://bvrxmbwq-5000.inc1.devtunnels.ms/api/trackVehicle/";
+const char *serverUrl = "http://192.168.34.195:3000/api/trackVehicle/";
 String carNumber = "";
 
 unsigned long lastSendTime = 0;
@@ -29,17 +27,13 @@ void setup() {
 
   carNumber = readCarNumber();
 
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("\nWiFi Connected");
-  Serial.println(WiFi.localIP());
+  Serial.println("Connecting to WiFi...");
+  connectToWiFi();
 
   server.on("/", HTTP_GET, handleRoot);
   server.on("/setCarNumber", HTTP_POST, handleSetCarNumber);
   server.begin();
+  Serial.println("Web server started.");
 }
 
 void loop() {
@@ -50,6 +44,8 @@ void loop() {
       String latitude = String(gps.location.lat(), 6);
       String longitude = String(gps.location.lng(), 6);
       sendGpsDataToBackend(latitude, longitude);
+    } else {
+      Serial.println("No valid GPS data available.");
     }
     lastSendTime = millis();
   }
@@ -68,13 +64,35 @@ void handleRoot() {
 }
 
 void handleSetCarNumber() {
-  Serial.println(server.arg("carNumber"));
   if (server.hasArg("carNumber")) {
-    carNumber = server.arg("carNumber");
-    storeCarNumber(carNumber);
-    server.send(200, "text/html", "Car number saved successfully!<br><a href='/'>Go back</a>");
+    String newCarNumber = server.arg("carNumber");
+    if (validateCarNumber(newCarNumber)) {
+      carNumber = newCarNumber;
+      storeCarNumber(carNumber);
+      server.send(200, "text/html", "Car number saved successfully!<br><a href='/'>Go back</a>");
+    } else {
+      server.send(400, "text/html", "Invalid car number format. Only letters, numbers, and hyphens are allowed.<br><a href='/'>Go back</a>");
+    }
   } else {
-    server.send(400, "text/html", "No car number provided<br><a href='/'>Go back</a>");
+    server.send(400, "text/html", "No car number provided.<br><a href='/'>Go back</a>");
+  }
+}
+
+void connectToWiFi() {
+  WiFi.begin(ssid, password);
+  int timeout = 30; // Timeout in seconds
+  while (WiFi.status() != WL_CONNECTED && timeout > 0) {
+    delay(500);
+    Serial.print(".");
+    timeout--;
+  }
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nWiFi Connected.");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
+  } else {
+    Serial.println("\nFailed to connect to WiFi. Restarting...");
+    ESP.restart();
   }
 }
 
@@ -96,29 +114,38 @@ String readCarNumber() {
   return carNumber;
 }
 
+bool validateCarNumber(String carNumber) {
+  for (size_t i = 0; i < carNumber.length(); i++) {
+    if (!isalnum(carNumber[i]) && carNumber[i] != '-') {
+      return false;
+    }
+  }
+  return true;
+}
+
 void sendGpsDataToBackend(String latitude, String longitude) {
   if (WiFi.status() == WL_CONNECTED) {
     WiFiClient client;
     HTTPClient http;
     String url = String(serverUrl) + carNumber;
     http.begin(client, url);
+
     String payload = "{\"lat\":\"" + latitude + "\",\"lng\":\"" + longitude + "\"}";
-    Serial.println(url);
-    Serial.println(payload);
     http.addHeader("Content-Type", "application/json");
 
+    Serial.println("Sending GPS data...");
     int httpCode = http.POST(payload);
 
     if (httpCode > 0) {
-      Serial.print("POST request sent. Response code: ");
+      Serial.printf("POST request sent. Response code: %d\n", httpCode);
       String response = http.getString();
       Serial.println("Server Response: " + response);
     } else {
-      Serial.print("Error sending POST request: ");
-      Serial.println(http.errorToString(httpCode).c_str());
-      Serial.println(httpCode); 
+      Serial.printf("Error sending POST request: %s\n", http.errorToString(httpCode).c_str());
     }
     http.end();
+  } else {
+    Serial.println("WiFi not connected. Cannot send GPS data.");
   }
 }
 

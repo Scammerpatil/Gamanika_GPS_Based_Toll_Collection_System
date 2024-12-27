@@ -2,7 +2,12 @@
 import ThemeToggler from "@/components/Header/ThemeToggler";
 import { SideNavItem } from "@/types/types";
 import { SIDENAV_ITEMS } from "./constant";
-import { AlignJustify, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  AlignJustify,
+  ChevronDown,
+  ChevronRight,
+  ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -79,13 +84,7 @@ const SideNav = ({ children }: { children: React.ReactNode }) => {
                 <div className="flex items-center gap-4 bg-transparent">
                   <div className="dropdown dropdown-left cursor-pointer bg-transparent">
                     <div tabIndex={0} role="button" className="btn m-1 w-full">
-                      <Image
-                        src={user.profileImageUrl}
-                        alt="Avatar"
-                        className="h-12 w-12"
-                        width={48}
-                        height={48}
-                      />
+                      <ShieldCheck size={24} />
                     </div>
                     <ul
                       tabIndex={0}
